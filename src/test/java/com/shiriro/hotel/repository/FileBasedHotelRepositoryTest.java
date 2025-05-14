@@ -14,9 +14,11 @@ class FileBasedHotelRepositoryTest {
 
     private final ObjectMapper mapper = ObjectMapperFactory.getInstance();
 
+    private final String resourcePath = "bookings-test.json";
+
     @Test
     void shouldLoadBookingsFromFile() {
-        FileBasedBookingRepository repository = new FileBasedBookingRepository("bookings.json", mapper);
+        FileBasedBookingRepository repository = new FileBasedBookingRepository(resourcePath, mapper);
         List<Booking> bookings = repository.findAll();
 
         assertNotNull(bookings);
@@ -28,6 +30,26 @@ class FileBasedHotelRepositoryTest {
     void shouldThrowExceptionWhenBookingFileMissing() {
         FileBasedBookingRepository repository = new FileBasedBookingRepository("nonexistent-bookings.json", mapper);
         assertThrows(FileLoadingException.class, repository::findAll);
+    }
+
+    @Test
+    void shouldFindBookingsByHotelId() {
+        FileBasedBookingRepository repository = new FileBasedBookingRepository(resourcePath, mapper);
+        List<Booking> result = repository.findByHotelId("H1");
+
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+        assertTrue(result.stream().allMatch(b -> b.hotelId().equals("H1")));
+    }
+
+    @Test
+    void shouldFindBookingsByHotelIdAndRoomType() {
+        FileBasedBookingRepository repository = new FileBasedBookingRepository(resourcePath, mapper);
+        List<Booking> result = repository.findByHotelIdAndRoomType("H1", "SGL");
+
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+        assertTrue(result.stream().allMatch(b -> b.hotelId().equals("H1") && b.roomType().equals("SGL")));
     }
 
 }

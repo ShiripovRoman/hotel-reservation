@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 public class FileBasedHotelRepository implements HotelRepository {
 
@@ -28,4 +29,12 @@ public class FileBasedHotelRepository implements HotelRepository {
             throw new FileLoadingException(resourcePath, e);
         }
     }
+
+    @Override
+    public Optional<Hotel> findById(String id) {
+        return findAll().stream()
+                .filter(h -> h.id().equals(id))
+                .findFirst();
+    }
+
 }

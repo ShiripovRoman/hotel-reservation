@@ -28,5 +28,20 @@ public class FileBasedBookingRepository implements BookingRepository {
             throw new FileLoadingException(resourcePath, e);
         }
     }
+
+    @Override
+    public List<Booking> findByHotelId(String hotelId) {
+        return findAll().stream()
+                .filter(b -> b.hotelId().equals(hotelId))
+                .toList();
+    }
+
+    @Override
+    public List<Booking> findByHotelIdAndRoomType(String hotelId, String roomType) {
+        return findAll().stream()
+                .filter(b -> b.hotelId().equals(hotelId))
+                .filter(b -> b.roomType().equals(roomType))
+                .toList();
+    }
 }
 
