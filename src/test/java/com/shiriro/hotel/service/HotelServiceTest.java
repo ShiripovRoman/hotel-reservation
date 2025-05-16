@@ -28,19 +28,23 @@ class HotelServiceTest {
 
     @Test
     void shouldReturnRoomCountForGivenType() {
+
+        final String hotelId = "H1";
+        final String roomType = "SGL";
+
         Hotel hotel = new Hotel(
-                "H1",
+                hotelId,
                 "Test Hotel",
-                List.of(new RoomType("SGL", "Single", List.of(), List.of())),
+                List.of(new RoomType(roomType, "Single", List.of(), List.of())),
                 List.of(
                         new Room("101", "SGL"),
                         new Room("102", "SGL"),
                         new Room("201", "DBL")
                 )
         );
-        when(hotelRepository.findById("H1")).thenReturn(Optional.of(hotel));
+        when(hotelRepository.findById(hotelId)).thenReturn(Optional.of(hotel));
 
-        int result = hotelService.countRoomsOfType("H1", "SGL");
+        int result = hotelService.countRoomsOfType(hotelId, roomType);
         assertEquals(2, result);
     }
 

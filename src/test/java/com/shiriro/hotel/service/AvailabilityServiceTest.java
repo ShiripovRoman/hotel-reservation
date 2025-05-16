@@ -28,11 +28,14 @@ class AvailabilityServiceTest {
 
     @Test
     void shouldReturnFullAvailabilityWhenNoBookingsOnDate() {
+        
+        final String hotelId = "H1";
+        final String roomType = "SGL";
 
-        when(hotelService.countRoomsOfType("H1", "SGL")).thenReturn(2);
-        when(bookingService.countBookingsOnDate("H1", "SGL", LocalDate.of(2025, 9, 1))).thenReturn(0);
+        when(hotelService.countRoomsOfType(hotelId, roomType)).thenReturn(2);
+        when(bookingService.countBookingsOnDate(hotelId, roomType, LocalDate.of(2025, 9, 1))).thenReturn(0);
 
-        int available = availabilityService.countAvailableRoomsOnDate("H1", LocalDate.of(2025, 9, 1), "SGL");
+        int available = availabilityService.countAvailableRoomsOnDate(hotelId, LocalDate.of(2025, 9, 1), roomType);
 
         assertEquals(2, available);
     }
@@ -40,10 +43,13 @@ class AvailabilityServiceTest {
     @Test
     void shouldReturnPartialAvailabilityWhenSomeRoomsAreBooked() {
 
-        when(hotelService.countRoomsOfType("H1", "SGL")).thenReturn(2);
-        when(bookingService.countBookingsOnDate("H1", "SGL", LocalDate.of(2025, 9, 2))).thenReturn(1);
+        final String hotelId = "H1";
+        final String roomType = "SGL";
 
-        int available = availabilityService.countAvailableRoomsOnDate("H1", LocalDate.of(2025, 9, 2), "SGL");
+        when(hotelService.countRoomsOfType(hotelId, roomType)).thenReturn(2);
+        when(bookingService.countBookingsOnDate(hotelId, roomType, LocalDate.of(2025, 9, 2))).thenReturn(1);
+
+        int available = availabilityService.countAvailableRoomsOnDate(hotelId, LocalDate.of(2025, 9, 2), roomType);
 
         assertEquals(1, available);
     }
@@ -51,10 +57,13 @@ class AvailabilityServiceTest {
     @Test
     void shouldReturnOverbookingWhenMoreBookingsThanRooms() {
 
-        when(hotelService.countRoomsOfType("H1", "SGL")).thenReturn(2);
-        when(bookingService.countBookingsOnDate("H1", "SGL", LocalDate.of(2025, 9, 4))).thenReturn(3);
+        final String hotelId = "H1";
+        final String roomType = "SGL";
 
-        int available = availabilityService.countAvailableRoomsOnDate("H1", LocalDate.of(2025, 9, 4), "SGL");
+        when(hotelService.countRoomsOfType(hotelId, roomType)).thenReturn(2);
+        when(bookingService.countBookingsOnDate(hotelId, roomType, LocalDate.of(2025, 9, 4))).thenReturn(3);
+
+        int available = availabilityService.countAvailableRoomsOnDate(hotelId, LocalDate.of(2025, 9, 4), roomType);
 
         assertEquals(-1, available);
     }
@@ -63,16 +72,20 @@ class AvailabilityServiceTest {
 
     @Test
     void shouldReturnMinimumAvailabilityAcrossDateRange_SGL() {
-        when(hotelService.countRoomsOfType("H1", "SGL")).thenReturn(2);
-        when(availabilityService.countAvailableRoomsOnDate("H1", LocalDate.of(2025, 9, 1), "SGL")).thenReturn(0);
-        when(availabilityService.countAvailableRoomsOnDate("H1", LocalDate.of(2025, 9, 2), "SGL")).thenReturn(1);
-        when(availabilityService.countAvailableRoomsOnDate("H1", LocalDate.of(2025, 9, 3), "SGL")).thenReturn(0);
+
+        final String hotelId = "H1";
+        final String roomType = "SGL";
+        
+        when(hotelService.countRoomsOfType(hotelId, roomType)).thenReturn(2);
+        when(availabilityService.countAvailableRoomsOnDate(hotelId, LocalDate.of(2025, 9, 1), roomType)).thenReturn(0);
+        when(availabilityService.countAvailableRoomsOnDate(hotelId, LocalDate.of(2025, 9, 2), roomType)).thenReturn(1);
+        when(availabilityService.countAvailableRoomsOnDate(hotelId, LocalDate.of(2025, 9, 3), roomType)).thenReturn(0);
 
         int available = availabilityService.countAvailableRoomsInRange(
-                "H1",
+                hotelId,
                 LocalDate.of(2025, 9, 1),
                 LocalDate.of(2025, 9, 4),
-                "SGL"
+                roomType
         );
 
         assertEquals(1, available);
@@ -80,13 +93,17 @@ class AvailabilityServiceTest {
 
     @Test
     void shouldReturnMinimumAvailabilityAcrossDateRange_DBL() {
-        when(hotelService.countRoomsOfType("H1", "DBL")).thenReturn(2);
+
+        final String hotelId = "H1";
+        final String roomType = "DBL";
+        
+        when(hotelService.countRoomsOfType(hotelId, roomType)).thenReturn(2);
 
         int available = availabilityService.countAvailableRoomsInRange(
-                "H1",
+                hotelId,
                 LocalDate.of(2025, 9, 1),
                 LocalDate.of(2025, 9, 4),
-                "DBL"
+                roomType
         );
 
         assertEquals(2, available);
@@ -94,24 +111,32 @@ class AvailabilityServiceTest {
 
     @Test
     void shouldThrowExceptionIfDateRangeIsInvalid() {
+
+        final String hotelId = "H1";
+        final String roomType = "SGL";
+        
         assertThrows(InvalidDateRangeException.class, () ->
                 availabilityService.countAvailableRoomsInRange(
-                        "H1",
+                        hotelId,
                         LocalDate.of(2025, 9, 5),
                         LocalDate.of(2025, 9, 5),
-                        "SGL"
+                        roomType
                 )
         );
     }
 
     @Test
     void shouldThrowExceptionIfFromAfterTo() {
+
+        final String hotelId = "H1";
+        final String roomType = "SGL";
+        
         assertThrows(InvalidDateRangeException.class, () ->
                 availabilityService.countAvailableRoomsInRange(
-                        "H1",
+                        hotelId,
                         LocalDate.of(2025, 9, 6),
                         LocalDate.of(2025, 9, 5),
-                        "SGL"
+                        roomType
                 )
         );
     }

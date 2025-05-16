@@ -25,15 +25,16 @@ class BookingServiceTest {
 
     @Test
     void shouldCountBookingsOnSpecificDate() {
-        String hotelId = "H1";
-        String roomType = "SGL";
-        LocalDate targetDate = LocalDate.of(2025, 9, 4);
+        final String hotelId = "H1";
+        final String roomType = "SGL";
+        final String roomRate = "Standard";
+        final LocalDate targetDate = LocalDate.of(2025, 9, 4);
 
         List<Booking> mockBookings = List.of(
-                new Booking(hotelId, LocalDate.of(2025, 9, 2), LocalDate.of(2025, 9, 5), roomType, "Standard"),
-                new Booking(hotelId, LocalDate.of(2025, 9, 3), LocalDate.of(2025, 9, 9), roomType, "Standard"),
-                new Booking(hotelId, LocalDate.of(2025, 9, 4), LocalDate.of(2025, 9, 5), roomType, "Standard"),
-                new Booking(hotelId, LocalDate.of(2025, 9, 5), LocalDate.of(2025, 9, 6), roomType, "Standard")
+                new Booking(hotelId, LocalDate.of(2025, 9, 2), LocalDate.of(2025, 9, 5), roomType, roomRate),
+                new Booking(hotelId, LocalDate.of(2025, 9, 3), LocalDate.of(2025, 9, 9), roomType, roomRate),
+                new Booking(hotelId, LocalDate.of(2025, 9, 4), LocalDate.of(2025, 9, 5), roomType, roomRate),
+                new Booking(hotelId, LocalDate.of(2025, 9, 5), LocalDate.of(2025, 9, 6), roomType, roomRate)
         );
 
         when(bookingRepository.findByHotelIdAndRoomType(hotelId, roomType))
