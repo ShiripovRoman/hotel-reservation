@@ -9,6 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -18,26 +19,38 @@ import static org.mockito.Mockito.when;
 class SearchServiceTest {
 
     @Mock
-    private AvailabilityService availabilityService;
+    private BookingService bookingService;
+
+    @Mock
+    private HotelService hotelService;
 
     @InjectMocks
     private SearchService searchService;
 
-
     @Test
     void shouldReturnMatchingStayPeriods() {
-
         final LocalDate today = LocalDate.now();
         final int nightsAhead = 6;
         final String hotelId = "H1";
         final String roomType = "SGL";
 
-        when(availabilityService.countAvailableRoomsOnDate(hotelId, today, roomType)).thenReturn(2);
-        when(availabilityService.countAvailableRoomsOnDate(hotelId, today.plusDays(1), roomType)).thenReturn(2);
-        when(availabilityService.countAvailableRoomsOnDate(hotelId, today.plusDays(2), roomType)).thenReturn(0);
-        when(availabilityService.countAvailableRoomsOnDate(hotelId, today.plusDays(3), roomType)).thenReturn(1);
-        when(availabilityService.countAvailableRoomsOnDate(hotelId, today.plusDays(4), roomType)).thenReturn(1);
-        when(availabilityService.countAvailableRoomsOnDate(hotelId, today.plusDays(5), roomType)).thenReturn(1);
+        when(hotelService.countRoomsOfType(hotelId, roomType)).thenReturn(2);
+
+        Map<LocalDate, Integer> bookingCounts = Map.of(
+                today, 0,
+                today.plusDays(1), 0,
+                today.plusDays(2), 2,
+                today.plusDays(3), 1,
+                today.plusDays(4), 1,
+                today.plusDays(5), 1
+        );
+
+        when(bookingService.countBookingsInRange(
+                hotelId,
+                roomType,
+                today,
+                today.plusDays(nightsAhead - 1)
+        )).thenReturn(bookingCounts);
 
         List<StayPeriod> result = searchService.searchDateRanges(hotelId, nightsAhead, roomType);
 
@@ -48,13 +61,25 @@ class SearchServiceTest {
 
     @Test
     void shouldReturnEmptyListIfNoAvailability() {
-
         final LocalDate today = LocalDate.now();
-        final int nightsAhead = 1;
+        final int nightsAhead = 3;
         final String hotelId = "H1";
         final String roomType = "SGL";
 
-        when(availabilityService.countAvailableRoomsOnDate(hotelId, today, roomType)).thenReturn(0);
+        when(hotelService.countRoomsOfType(hotelId, roomType)).thenReturn(2);
+
+        Map<LocalDate, Integer> bookingCounts = Map.of(
+                today, 2,
+                today.plusDays(1), 2,
+                today.plusDays(2), 2
+        );
+
+        when(bookingService.countBookingsInRange(
+                hotelId,
+                roomType,
+                today,
+                today.plusDays(nightsAhead - 1)
+        )).thenReturn(bookingCounts);
 
         List<StayPeriod> result = searchService.searchDateRanges(hotelId, nightsAhead, roomType);
 

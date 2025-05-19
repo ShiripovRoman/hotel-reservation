@@ -8,6 +8,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -75,11 +76,20 @@ class AvailabilityServiceTest {
 
         final String hotelId = "H1";
         final String roomType = "SGL";
+
+        Map<LocalDate, Integer> bookingCounts = Map.of(
+                LocalDate.of(2025, 9, 1), 0,
+                LocalDate.of(2025, 9, 2), 1,
+                LocalDate.of(2025, 9, 3), 0
+        );
         
         when(hotelService.countRoomsOfType(hotelId, roomType)).thenReturn(2);
-        when(availabilityService.countAvailableRoomsOnDate(hotelId, LocalDate.of(2025, 9, 1), roomType)).thenReturn(0);
-        when(availabilityService.countAvailableRoomsOnDate(hotelId, LocalDate.of(2025, 9, 2), roomType)).thenReturn(1);
-        when(availabilityService.countAvailableRoomsOnDate(hotelId, LocalDate.of(2025, 9, 3), roomType)).thenReturn(0);
+        when(bookingService.countBookingsInRange(
+                hotelId,
+                roomType,
+                LocalDate.of(2025, 9, 1),
+                LocalDate.of(2025, 9, 4)
+        )).thenReturn(bookingCounts);
 
         int available = availabilityService.countAvailableRoomsInRange(
                 hotelId,

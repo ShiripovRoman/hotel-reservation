@@ -24,7 +24,7 @@ public class Main {
         var hotelService = new HotelService(hotelRepo);
         var bookingService = new BookingService(bookingRepo);
         var availabilityService = new AvailabilityService(bookingService, hotelService);
-        var searchService = new SearchService(availabilityService);
+        var searchService = new SearchService(bookingService, hotelService);
 
         new ConsoleAppRunner(availabilityService, searchService).run();
     }

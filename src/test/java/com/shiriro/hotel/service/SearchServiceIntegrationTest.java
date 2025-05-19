@@ -30,8 +30,7 @@ class SearchServiceIntegrationTest {
             var bookingRepo = new FileBasedBookingRepository("bookings-test.json", mapper);
             var hotelService = new HotelService(hotelRepo);
             var bookingService = new BookingService(bookingRepo);
-            var availabilityService = new AvailabilityService(bookingService, hotelService);
-            var searchService = new SearchService(availabilityService);
+            var searchService = new SearchService(bookingService, hotelService);
 
             int nightsAhead = 30;
             String hotelId = "H1";
