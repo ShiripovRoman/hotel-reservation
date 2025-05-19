@@ -4,9 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shiriro.hotel.exception.FileLoadingException;
 import com.shiriro.hotel.model.Hotel;
 import com.shiriro.hotel.util.ObjectMapperFactory;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -14,8 +16,14 @@ import static org.junit.jupiter.api.Assertions.*;
 class FileBasedBookingRepositoryTest {
 
     private final ObjectMapper mapper = ObjectMapperFactory.getInstance();
+    private String resourcePath;
 
-    private final String resourcePath = "hotels-test.json";
+    @BeforeEach
+    void setUp() {
+        resourcePath = Objects.requireNonNull(
+                getClass().getClassLoader().getResource("hotels-test.json")
+        ).getFile();
+    }
 
     @Test
     void shouldLoadHotelsFromFile() {
@@ -49,5 +57,4 @@ class FileBasedBookingRepositoryTest {
 
         assertTrue(result.isEmpty());
     }
-
 }

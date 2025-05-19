@@ -10,6 +10,7 @@ import org.mockito.MockedStatic;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -26,8 +27,10 @@ class SearchServiceIntegrationTest {
             mock.when(() -> Dates.toCompactDateString(any())).thenCallRealMethod();
 
             var mapper = ObjectMapperFactory.getInstance();
-            var hotelRepo = new FileBasedHotelRepository("hotels-test.json", mapper);
-            var bookingRepo = new FileBasedBookingRepository("bookings-test.json", mapper);
+            String hotelsPath = Objects.requireNonNull(getClass().getClassLoader().getResource("hotels-test.json")).getFile();
+            String bookingsPath = Objects.requireNonNull(getClass().getClassLoader().getResource("bookings-test.json")).getFile();
+            var hotelRepo = new FileBasedHotelRepository(hotelsPath, mapper);
+            var bookingRepo = new FileBasedBookingRepository(bookingsPath, mapper);
             var hotelService = new HotelService(hotelRepo);
             var bookingService = new BookingService(bookingRepo);
             var searchService = new SearchService(bookingService, hotelService);

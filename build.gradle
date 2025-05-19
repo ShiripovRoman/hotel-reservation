@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'application'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
 group = 'com.shiriro'
@@ -17,6 +18,10 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testImplementation 'org.mockito:mockito-junit-jupiter:5.10.0'
     testImplementation "org.mockito:mockito-inline:5.2.0"
+}
+
+application {
+    mainClass = 'com.shiriro.Main'
 }
 
 test {

@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -18,8 +19,12 @@ class AvailabilityServiceIntegrationTest {
     @BeforeEach
     void setUp() {
         ObjectMapper mapper = ObjectMapperFactory.getInstance();
-        var hotelRepo = new FileBasedHotelRepository("hotels-test.json", mapper);
-        var bookingRepo = new FileBasedBookingRepository("bookings-test.json", mapper);
+
+        String hotelsPath = Objects.requireNonNull(getClass().getClassLoader().getResource("hotels-test.json")).getFile();
+        String bookingsPath = Objects.requireNonNull(getClass().getClassLoader().getResource("bookings-test.json")).getFile();
+
+        var hotelRepo = new FileBasedHotelRepository(hotelsPath, mapper);
+        var bookingRepo = new FileBasedBookingRepository(bookingsPath, mapper);
         var hotelService = new HotelService(hotelRepo);
         var bookingService = new BookingService(bookingRepo);
 

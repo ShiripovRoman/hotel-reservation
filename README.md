@@ -13,23 +13,33 @@ A small Java CLI app for checking hotel room availability and searching over a d
 
 ## How to Run
 
-This application is designed to be run directly from an IDE.
+This application expects two required arguments:
 
-1. Clone the repository
-2. Open it in IntelliJ IDEA (or any Java-supporting IDE)
-3. Navigate to `Main.java` (`com.shiriro.Main`)
-4. Right-click → Run
+```bash
+java -jar path/to/hotel-reservation-1.0-SNAPSHOT-all.jar --hotels path/to/hotels.json --bookings path/to/bookings.json
+```
+ex.:
+```bash 
+java -jar build/libs/hotel-reservation-1.0-SNAPSHOT-all.jar --hotels .\src\main\resources\hotels.json --bookings .\src\main\resources\bookings.json
+```
 
-This setup is intentional: there's no need to overengineer a launcher or add additional runtime dependencies. Since the primary goal of this project is to demonstrate design and code structure, running it inside an IDE is the most straightforward and practical approach. It also makes it easier to inspect and evaluate the code in a real development environment.
+* You must first build the project using Gradle:
 
-If needed, the project could be extended later with a build script and launcher for command-line execution.
+```bash
+./gradlew shadowJar
+```
 
-The app will read from:
+* This will generate a fat JAR with all dependencies:
 
-* `hotels.json`
-* `bookings.json`
+```
+build/libs/hotel-reservation-1.0-SNAPSHOT-all.jar
+```
 
-These files should be located in the `resources` folder.
+* The application will read hotel and booking data from the JSON files you provide via command-line arguments.
+
+**Note:**
+
+There is also a commented-out alternative version in `Main.java` that uses files from the `resources` directory for easier launching inside an IDE. This is useful when running without arguments in a development environment, but is disabled by default.
 
 ---
 
@@ -49,7 +59,7 @@ Leave blank to exit.
 
 The project uses a layered design with clear separation between repositories, services, and CLI interaction.
 
-* **Repositories** are read-only and file-based (`hotels.json`, `bookings.json`).
+* **Repositories** are read-only and file-based (accepting file paths).
 * **Services** contain all business logic (filtering, availability calculations).
 * The repository layer is kept minimal and free of logic for easier future replacement (e.g., SQL, NoSQL, caching).
 * **No caching** is currently used — data is read from files each time to keep the implementation simple.
@@ -106,6 +116,7 @@ The project includes both **unit tests** and **integration tests** (that load da
 ## Use of AI Tools
 
 General-purpose assistants (such as СhatGPT) were used during development to support:
+
 * Reviewing and refining architectural choices
 * Improving clarity in code structure and documentation
 * Aligning with widely accepted design principles

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shiriro.hotel.exception.FileLoadingException;
 import com.shiriro.hotel.model.Hotel;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -22,8 +23,7 @@ public class FileBasedHotelRepository implements HotelRepository {
 
     @Override
     public List<Hotel> findAll() {
-        try (InputStream is = getClass().getClassLoader().getResourceAsStream(resourcePath)) {
-            if (is == null) throw new FileLoadingException(resourcePath);
+        try (InputStream is = new FileInputStream(resourcePath)) {
             return Arrays.asList(mapper.readValue(is, Hotel[].class));
         } catch (IOException e) {
             throw new FileLoadingException(resourcePath, e);
